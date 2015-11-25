@@ -1,0 +1,6 @@
+*.class
+.metadata
+.recommenders
+.settings
+target
+RemoteSystemsTempFiles

@@ -1,0 +1,43 @@
+<flow xmlns="http://www.springframework.org/schema/webflow"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow.xsd">
+
+    <!--
+    Display TwoFactor page to user for him to insert the token.
+    On successful verification of two-factor authentication, return to remaining flow.
+    On exception and non-validated responses, display the TwoFactor page view.
+	For all other exceptions, display the default Shibboleth IDP3 error page.
+    -->
+
+    <!-- Rudimentary impediment to direct execution of subflow. -->
+    <input name="calledAsSubflow" type="boolean" required="true" />
+
+    <on-start>
+        <evaluate expression="opensamlProfileRequestContext.getSubcontext(T(net.shibboleth.idp.authn.context.AuthenticationContext))" result="flowScope.authenticationContext" />
+        <evaluate expression="authenticationContext.getSubcontext(T(net.shibboleth.idp.authn.context.UsernamePasswordContext))" result="flowScope.usernamePasswordContext" />
+        <evaluate expression="T(it.reti.integrations.TwoFactorAuthentication).instance(environment.getProperty('twofactor.token', ''), usernamePasswordContext.getUsername())" result="flowScope.twofactor" />
+    </on-start>
+
+    <!-- Display TwoFactor authentication page -->
+    <view-state id="TwoFactorPage" view="twofactor">
+        <on-render>
+            <evaluate expression="environment" result="viewScope.environment" />
+            <evaluate expression="flowRequestContext.getExternalContext().getNativeRequest()" result="viewScope.request" />
+        </on-render>
+
+        <transition to="TwoFactorAuthValidateResponse" />
+    </view-state>
+
+    <!-- Validate authentication page response -->
+    <action-state id="TwoFactorAuthValidateResponse">
+        <evaluate expression="twofactor.verifyUserToken(requestParameters.j_token)"/>
+        
+        <!-- Proceed on successful authentication -->
+        <transition on="yes" to="proceed" />
+        <!-- Show TwoFactor authentication page on non-true validation result -->
+        <transition to="TwoFactorPage" />
+    </action-state>
+
+    <end-state id="proceed" />
+
+</flow>
