@@ -40,4 +40,26 @@ The installation for this module goes as follows:
        <transition on="proceed" to="proceed" />
    </subflow-state>
    ```
+   
+1. edit `general-authn.xml` located at `$IDP_HOME/conf/authn/general-authn.xml` to add the
+   new authentication context for requesting a token:
+   ```
+   <bean id="authn/Password" parent="shibboleth.AuthenticationFlow"
+        p:passiveAuthenticationSupported="true"
+        p:forcedAuthenticationSupported="true">
+       <property name="supportedPrincipals">
+           <list>
+               <bean parent="shibboleth.SAML2AuthnContextClassRef"
+                   c:classRef="urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport" />
+               <bean parent="shibboleth.SAML2AuthnContextClassRef"
+                   c:classRef="urn:oasis:names:tc:SAML:2.0:ac:classes:Password" />
+               <bean parent="shibboleth.SAML2AuthnContextClassRef"
+                   c:classRef="urn:oasis:names:tc:SAML:2.0:ac:classes:Token" />
+               <bean parent="shibboleth.SAML1AuthenticationMethod"
+                   c:method="urn:oasis:names:tc:SAML:1.0:am:password" />
+           </list>
+       </property>
+   </bean>
+   ```
+   
 1. restart your application server.

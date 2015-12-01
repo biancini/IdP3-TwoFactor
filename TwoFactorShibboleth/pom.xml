@@ -8,12 +8,32 @@
   <artifactId>TwoFactorShibboleth</artifactId>
   <version>1.0</version>
 
+  <repositories>
+    <repository>
+      <id>shibboleth.net.releases</id>
+      <name>shibboleth</name>
+      <layout>default</layout>
+      <url>https://build.shibboleth.net/nexus/content/repositories/releases/</url>
+      <releases>
+        <updatePolicy>always</updatePolicy>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </repository>
+  </repositories>
+
   <dependencies>
      <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
       <version>1.7.10</version>
       <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>net.shibboleth.idp</groupId>
+      <artifactId>idp-authn-api</artifactId>
+      <version>3.1.2</version>
     </dependency>
     <!-- test dependencies -->
     <dependency>
@@ -22,6 +42,12 @@
       <version>4.11</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-all</artifactId>
+      <version>1.9.5</version>
+      <scope>test</scope>
+	</dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-nop</artifactId>

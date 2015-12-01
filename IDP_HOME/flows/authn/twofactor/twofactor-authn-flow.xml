@@ -17,6 +17,16 @@
         <evaluate expression="authenticationContext.getSubcontext(T(net.shibboleth.idp.authn.context.UsernamePasswordContext))" result="flowScope.usernamePasswordContext" />
         <evaluate expression="T(it.reti.integrations.TwoFactorAuthentication).instance(environment.getProperty('twofactor.token', ''), usernamePasswordContext.getUsername())" result="flowScope.twofactor" />
     </on-start>
+	
+    <!-- Check whether to request token or not -->
+    <action-state id="IsTwoFactorRequested">
+        <evaluate expression="twofactor.isTokenEnabled(flowScope.authenticationContext)"/>
+
+        <!-- Proceed to the Two Factor request page -->
+        <transition on="yes" to="TwoFactorPage" />
+        <!-- Proceed and terminate current subflow -->
+        <transition to="proceed" />
+    </action-state>
 
     <!-- Display TwoFactor authentication page -->
     <view-state id="TwoFactorPage" view="twofactor">
